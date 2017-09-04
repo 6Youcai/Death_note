@@ -1,0 +1,62 @@
+# 逻辑回归
+
+$$
+p = \frac{1}{1+e^{-x}}
+$$
+
+```{r echo=FALSE}
+curve(1/(1+exp(-x)), xlim = c(-6, 6),
+      xlab = "x", ylab = "p")
+```
+
+```{r echo=FALSE}
+fit <- glm(formula = am ~ cyl + hp + wt, data = mtcars, family = binomial)
+# summary(fit)
+#
+fit2 <- glm(formula = am ~ wt, data = mtcars, family = binomial)
+# summary(fit2)
+#
+wt <- sort(mtcars$wt)
+plot(wt, 1/(1+exp(-4.024*wt+12.040)), type = 'l',
+     xlab = "wt", ylab = "am")
+tag <- mtcars$am == 0
+points(mtcars$wt[tag], mtcars$am[tag], col = 2, pch = 18)
+points(mtcars$wt[!tag], mtcars$am[!tag], col = 3, pch = 19)
+```
+
+
+# 相关系数
+
+```{r echo=FALSE}
+a <- 1:10
+b <- exp(a)
+# cor(a,b, method = "pearson") # 0.7168704
+# cor(a,b, method = "spearman") # 1
+curve(exp(x), xlim = c(0,10))
+points(a,b, col = 2, pch = 19)
+# abline(lm(b~a), lty = 3, col = 4)
+legend("topleft", legend = c("cor(pearson)=0.7168704", "cor(spearman)=1"))
+```
+
+
+斯皮尔曼相关系数（即Spearman Correlation Coefficient）是等级相关系数，反映两变量间相关的密切程度与方向，
+适用于对不服从双变量正态分布的资料，总体分布类型未知，和原始数据用等级表示的资料进行分析。
+
+
+```{r echo=FALSE}
+plot(women)
+cor.test(women$height, women$weight,
+         alternative = "two.sided", method = "pearson", conf.level = 0.95)
+##
+fit <- lm(women$weight ~ women$height)
+summary(fit)
+abline(fit, col = 2)
+##
+opar <- par(no.readonly = TRUE)
+par(mfrow = c(2,2))
+plot(fit)
+par(opar)
+
+# 残差
+residuals(fit)
+```
