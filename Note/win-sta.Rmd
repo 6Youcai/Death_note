@@ -1,0 +1,747 @@
+# 第一章 概率论的基本概念
+
+- 随机试验
+- 样本空间、随机事件
+- 频率与概率
+- 等可能概型（古典概型）
+- 条件概率
+- 独立性
+
+# 第二章 随机变量及其分布
+
+直观上看，随机变量就是我们在随机试验中测定的量，例如10只新生动物其中雄性的数量。随机变量的取值随试验结果而定，在试验之前不能预知它取什么值，且它的取值有一定的概率。
+
+一个随机变量，如果它全部可能取到的值是有限个或可列无限多个，这种随机变量就是离散型随机变量，不是这种情况则称为非离散型。
+
+$$
+随机变量 
+\begin{cases}
+离散型 \\ \\
+非离散型
+\begin{cases}
+连续型 \\
+其他
+\end{cases}
+\end{cases}
+$$
+
+设X是一个随机变量，x是任意实数，则X分布函数为：
+
+$$
+F(x) = P \{ X <= x \}, \quad -Inf < x < Inf
+$$
+
+
+
+## （一）、离散型随机变量及其分布律
+
+### 1、（0—1）分布、两点分布
+
+随机变量 X 只可能取0与1两个值，它的分布律是：
+
+$$
+P(n)=\left\{
+\begin{aligned}
+1-p\ n=0\\
+p\ n=1\\
+\end{aligned}
+\right.
+$$
+
+（0—1）可以理解为n=1的二项分布，也就是只进行一次试验，要么成功要么失败。
+
+### 2、二项分布、伯努利试验
+
+重复进行n次独立实验，用X记成功次数，记为 X ~ b(n, p)。
+
+$$
+P(X=i) = C_n^i \cdot p^i \cdot q^{n-i}
+$$
+
+```{r echo=FALSE}
+plot(0:10, dbinom(0:10, size=10, prob=0.5), 
+     pch = 19, xlab = "Times", ylab = "P")
+legend("topright", legend = "b(10, 0.5)")
+```
+
+### 3、泊松分布
+
+二项分布中，当事件出现的概率极小（p->0），而实验次数又极大(n->Inf)，使得np->λ（常数）时（通常当n≧20, p≦0.05时）二，项分布就趋近于Poisson分布，记作：X ~ π(λ)：
+
+$$
+p(X=i) =  \frac{\lambda^i}{i!} \cdot e^{-\lambda} \quad (i=0,1,2,...)
+$$
+
+```{r echo=FALSE}
+plot(0:50, dpois(0:50, lambda = 4), 
+     pch = 20, xlab = "Times", ylab = "P")
+legend("topright", "π(4)")
+```
+
+泊松分布是二项分布n很大而p很小时的一种极限形式，从数学上可以证明：
+
+$$
+\lim\limits_{n\to\infty} \cdot \left( \begin{array}{c}n\\k\end{array} \right) \cdot
+p_n^k \cdot (1-p_n)^{n-k} = \frac{\lambda^ke^{-\lambda}}{k!}
+$$
+
+~~[shiny app]~~
+
+<!-- ```{r echo=FALSE} -->
+<!-- inputPanel( -->
+<!--   sliderInput("size", label = "number of observations:", -->
+<!--               min = 20, max = 1000, value = 20, step = 50, -->
+<!--               animate=TRUE), -->
+<!--   sliderInput("prob", label = "probability on each trial:", -->
+<!--               min = 0.01, max = 0.5, value = 0.5, step = 0.01, -->
+<!--               animate=TRUE) -->
+<!-- ) -->
+<!-- renderPlot({ -->
+<!--   n <- input$size -->
+<!--   p <- input$prob -->
+<!--   plot(0:n, dbinom(0:n, size = n, prob = p), -->
+<!--        xlim = c(0, n), pch = 19, type = "l",  -->
+<!--        # xaxt = "n", -->
+<!--        yaxt = "n", -->
+<!--        xlab = "", ylab = "") -->
+<!--   points(0:n, dpois(0:n, n*p), type = "l", col = 2) -->
+<!--   legend("topright", col =c(1,2), lty = c(1,1), -->
+<!--          legend = c("Binomial Distribution", "Poisson Distribution")) -->
+<!-- }) -->
+<!-- ``` -->
+
+
+## （二）、连续型随机变量及其概率密度
+
+如果对于随机变量 X 的分布函数 F(x)，存在非负可积函数 f(x)，使得任意实数 x 有：
+$$
+F(x) = \int _{-\infty}^x \cdot f(t) \cdot dt
+$$
+则称 X 为连续型随机变量，f(x) 成为X的概率密度函数，简称概率密度。
+
+### 1、均匀分布
+
+随机变量X落在区间(a, b)中任意长度的子区间的可能性是相同的；记作 X ~ U(a,b)
+
+$$
+f(x) =
+\begin{cases}
+\frac{1}{b-a} \quad \quad a<=x<=b \\
+\\
+0 \quad \quad \quad x>a \quad or \quad x<b
+\end{cases}
+\\ \\
+F(X) = \begin{cases}
+0 \quad \quad x<a\\ \\
+\frac{x-a}{b-a} \quad a<=x <b\\ \\
+1 \quad \quad x>=b
+\end{cases}
+$$
+
+```{r echo=FALSE}
+mypar <- par(no.readonly = TRUE)
+par(mfrow=c(1,2)) 
+# f(x)
+plot(0:10, rep(1, 11),
+     type="n", ylim = c(0,0.4), 
+     xlab = "", ylab = "", main = "f(x)")
+segments(0,0,  3,0)
+segments(3,0.2,  8,0.2)
+segments(3,0, 3,0.2, lty = 2)
+segments(8,0,  8,0.2, lty = 2)
+segments(8,0,  11,0)
+# F(x)
+plot(0:10, rep(1, 11),
+     type="n", ylim = c(0,1.5), 
+     xlab = "", ylab = "", main = "F(x)")
+segments(0,0,  3,0)
+segments(3,0,  8,1)
+segments(8,1, 11,1)
+par(mypar)
+```
+
+### 2、指数分布
+
+指数分布可以用来表示独立随机事件发生的时间间隔，比如旅客进机场的时间间隔。指数分布与泊松分布有密切关系：当单位时间或空间内成功的次数服从泊松分布时，两次成功之间的时间或空间间隔服从指数分布。
+
+$$
+f(x) = 
+\begin{cases}
+\lambda \cdot e^{-\lambda x}  \quad x>= 0\\
+0 \quad \quad \quad \quad  x<0
+\end{cases} 
+\\
+F(x) = 
+\begin{cases}
+1-e^{-\lambda x} \quad x>= 0\\
+0 \quad \quad \quad \quad x<0
+\end{cases}
+$$
+
+```{r echo=FALSE}
+curve(dexp(x, rate = 1), 
+      xlim = c(0,4), ylim = c(0,3), xlab = "x", ylab = "f(x)")
+curve(dexp(x, rate = 3), 
+      xlim = c(0,4), ylim = c(0,3), add = TRUE, col = "red")
+legend("topright", legend = c("λ=1", "λ=3"), col = c("black", "red"), lty = c(1, 1))
+```
+
+### 3、正态分布
+
+正态分布也可以作为二项分布的极限，当 n->Inf，若q,p均不趋于0，此时的二项分布以N(np, npq)为极限；(若p或q趋向于0，则二项分布以泊松分布为极限)；
+
+正态分布通常极为N(μ, $σ^2$)；若μ = 0，σ = 1，则成为标准正态分布，记为N(0, 1)；标准正态分布的密度函数和分布函数分别用 φ(x) 和 Φ(x)表示；
+
+$$
+\phi(x) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2}x^2} \quad \quad \quad \quad (-Inf < x < Inf)
+\\
+\Phi(x) = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^x e^{-\frac{1}{2}y^2} dy \quad (-Inf < x < Inf)
+$$
+
+```{r echo=FALSE}
+curve(dnorm(x, mean = 0, sd = 0.5), 
+      xlim = c(-3, 3), col = 1, xlab = "", ylab = "f(x)")
+curve(dnorm(x, mean = 0, sd = 1), add = TRUE, col = 2)
+curve(dnorm(x, mean = 0, sd = 1.5), add = TRUE, col = 3)
+curve(dnorm(x, mean = 1, sd = 1.5), add = TRUE, col = 4)
+abline(v = 0, lty = 2)
+abline(v = 1, lty = 2)
+legend("topright", lty = c(1,1,1,1), col = c(1,2,3,4),
+       legend = c("N(0, 0.5^2)", "N(0, 1^2)", "N(0, 1.5^2)", "N(1, 1.5^2)"))
+##
+curve(dnorm(x, mean = 0, sd = 1), xlab = "", ylab = "",
+      xlim = c(-3, 3), ylim = c(0, 1), main = "N(0,1)")
+curve(pnorm(x, mean = 0, sd = 1), 
+      xlim = c(-3, 3), ylim = c(0, 1), add = TRUE, col = 2)
+legend("topleft", lty = c(1,1), col = c(1,2),
+       legend = c("φ(x)", "Φ(x)"))
+```
+
+
+# 第三章 多维随机变量及其分布
+
+- 二维随机变量
+- 边缘分布
+- 条件分布
+- 相互独立的随机变量
+- 两个随机变量的函数分布
+
+# 第四章 随机变量的数字特征
+
+## （一）、数学期望，方差
+
+随机变量的数字特征最重要的有两个，期望和方差；期望代表了随机变量的平均值，方差代表了随机变量的离散程度。
+
+分布|参数|期望|方差
+----|----|----|----
+两点分布|X|p|pq
+二项分布|b(n,p)|np|npq
+负二项分布|||
+几何分布|g(i,p)|$\frac{1}{p}$|$\frac{q}{p^2}$
+超几何分布|||
+泊松分布|π(λ)|λ|λ
+均匀分布|[a,b]|(a+b)/2|$\frac{1}{12}(b-a)^2$
+指数分布|||
+正态分布|$N(u,σ^2)$|u|$σ^2$
+
+
+## （二）、协方差及相关系数
+
+协方差的计算公式为 Cov(X,Y) = E{[X-E(X)][Y-E(Y)]}，含义为“X与其均值之差”与“Y与其均值之差”乘积的均值；若两个变量X,Y在变化过程中方向相同，同时变大或变小，此时协方差为正，若变化方向相反，则协方差为负；协方差的大小表示相同或相反的程度。
+
+```{r echo=FALSE}
+par(mfrow=c(1,2))
+##
+x1 <- 1:7
+y1 <- c(1,-2,-3,-2.8,0.8,1.5,0.1)
+plot(x1, y1, ylim = c(-9, 2), lty = 2,
+     xlab = "", ylab = "", main = "ρ=1",
+     yaxt = "n", type = "l")
+points(x1, y1, col = 3, pch = 19)
+points(x1, y1-5, type = "l", lty = 2)
+points(x1, y1-5, col = 2, pch = 19)
+abline(h = mean(y1), lty = 2)
+abline(h = mean(y1)-5, lty = 2)
+# legend("topright", legend = "ρ=1")
+##
+plot(x1, y1, ylim = c(-9, 2), lty = 2,
+     xlab = "", ylab = "", main = "ρ=-1",
+     yaxt = "n", type = "l")
+points(x1, y1, col = 3, pch = 19)
+points(x1, -y1-7, type = "l", lty = 2)
+points(x1, -y1-7, col = 2, pch = 19)
+abline(h = mean(y1), lty = 2)
+abline(h = mean(-y1-7), lty = 2)
+# legend("topright", legend = "ρ=-1")
+par(mypar)
+```
+
+相关系数$ρ=\frac{Cov(X,Y)}{\delta_X\delta_Y}$，即X,Y的协方差除以X,Y标准差，是一种消除了量纲、标准化的特殊协方差，相关系数的取值范围是-1到1，为 0 时表示两个变量相互独立，为 1 时表示两个变量具有完全线性关系；
+
+# （三）、矩、协方差矩阵
+
+# 第五章 大数定律及中心极限定理
+
+人们在长期的实践中认识到当试验次数不断增大时，频率稳定在一个数的附近，即频率具有稳定性。
+
+中心极限定理表明，在相当一般的条件小，当独立随机变量的个数不断增加时，其和的分布趋于正态分布，这也是在实际应用中为什么会经常遇到正态分布的缘故；
+
+<!-- ```{r eruptions, echo=FALSE} -->
+<!-- inputPanel( -->
+<!--   sliderInput("times", label = "Number of Rolls", -->
+<!--               animate = TRUE, -->
+<!--               min = 50, max = 1000, value = 50, step = 50) -->
+<!-- ) -->
+<!-- renderPlot({ -->
+<!--   times <- input$times -->
+
+<!--   roll <- function(tt) mean(sample(1:6, tt, replace = TRUE)) -->
+
+<!--   plot(1:times, sapply(1:times, roll), type = "l",  -->
+<!--        ylim =c(0,6), xlab = "Number of Rolls", ylab = "Value") -->
+<!--   abline(h = 3.5, lty = 2) -->
+<!-- }) -->
+<!-- ``` -->
+
+~~[shiny app]~~
+
+# 第六章 样本及抽样分布
+
+## （一）、随机样本
+
+## （二）、直方图和箱线图
+
+## （三）、抽样分布
+
+χ^2 分布，t分布，F分布，这三个分布称为统计学的三大分布，它们在数量统计中有着广泛的应用。
+
+### 1、χ^2 分布
+
+设X1,X2,X3,...,Xn是来自N(0,1)的样本，则称统计量
+$$
+χ^2 = X_1^2 + X_2^2 + X_3^2 + ... + X_n^2 
+$$
+服从自由度为n的χ^2分布，记为 χ^2 ~ χ^2(n);
+
+χ^2的概率密度为
+$$
+f(y) = \begin{cases}
+\frac{1}{2^{n/2}\Gamma(n/2)} \cdot y^{n/2-1} e^{-y/2} \quad y>0 \\ \\
+0 \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad Other
+\end{cases}
+$$
+
+```{r echo=FALSE}
+curve(dchisq(x, df = 1), xlim = c(0,14), 
+      ylim = c(0,0.4), xlab = "", ylab = "")
+curve(dchisq(x, df = 2), add = TRUE, col = 2)
+curve(dchisq(x, df = 4), add = TRUE, col = 3)
+curve(dchisq(x, df = 6), add = TRUE, col = 4)
+curve(dchisq(x, df = 11), add = TRUE, col = 5)
+legend("topright", lty = c(1,1,1,1,1), col = c(1:5),
+       legend = c("df=1", "df=2", "df=4", "df=6", "df=11"))
+```
+
+### 2、t分布
+
+设X ~ N(0,1), Y ~ $χ^2$(n)，且X,Y相互独立，则随机变量
+$$
+X \sim N(0,1), \quad Y \sim χ^2(n), \quad 
+t = \frac{X}{\sqrt{Y/n}} \\
+h(t) = \frac{\Gamma[(n+1)/2]}{\sqrt{\pi n}\Gamma(n+2)}(1+\frac{t^2}{n})^{-(n+1)/2}, \quad -\infty<t<\infty
+$$
+
+```{r echo=FALSE}
+curve(dt(x, df = 30), xlim = c(-4, 4), ylim = c(0,0.4),
+      xlab = "", ylab = "")
+curve(dt(x, df = 2), add = TRUE, col = 2)
+legend("topright", lty = c(1,1), col = c(1,2),
+       legend = c("df=30", "df=2"))
+```
+
+### 3、F分布
+
+设U ~ $χ^2$(n1), V ~ $χ^2$(n2)，且U,V相互独立，则随机变量F服从自由度为(n1,n2)的F分布，记为F~F(n1, n2) 
+$$
+U \sim χ^2(n_1), \quad Y \sim χ^2(n_2), \quad
+F = \frac{U/n_1}{V/n_2} \\
+\phi(y) = \begin{cases}
+\frac{\Gamma [(n_1+n_2)/2](n_1/n_2)^{n_1/2}y^{(n1/2)-1}}
+{\Gamma(n_1/2)\Gamma(n_2/2)[1+(n_1y/n_2)]^{(n_1+n_2)/2}} \quad  \quad  \quad ,  \quad y>0\\ \\
+0, \quad oterh 
+\end{cases}
+$$
+
+```{r echo=FALSE}
+curve(df(x, df1 = 10, df2 = 40), xlim = c(0,4), ylim = c(0,1),
+      xlab = "", ylab = "")
+curve(df(x, df1 = 11, df2 = 3), add = TRUE, col = 2)
+legend("topright", lty = c(1,1), legend = c("F(10,40)", "F(11,3)"), col = c(1,2))
+```
+
+### 4、正态总体的样本均值与样本方差的分布
+
+* 设有总体 $X \sim N(\mu, \delta^2)$，而$X_1,X_2,...,X_n$是来自 X 的样本，则有：
+    <p> 
+    - $\overline{X} \sim N(\mu, \frac{\delta^2}{n})$
+    <p> 
+    - $\frac{(n-1)S^2}{\delta^2} \sim \chi^2(n-1)$
+    <p>
+    - $\overline{X}$ 与$S^2$相互独立
+    <p>
+    - $\frac{\overline{X}-\mu}{S/\sqrt{n}} \sim t(n-1)$
+    <p>
+    
+* 设有$X\sim N(\mu_1,\delta_1^2), Y\sim N(\mu_2,\delta_2^2)$
+    <p>
+    - $\frac{S_1^2/S_2^2}{\delta_1^2/\delta_2^2} \sim F(n_1-1, n_2-1)$
+    <p>
+    - $\frac{(\overline X - \overline Y)-(\mu_1 - \mu_2)}{S_\omega\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} \sim t(n_1 + n_2 -2)$
+
+
+# 第七章 参数估计
+
+## （一）、点估计
+
+设总体X的分布函数的形式已知，但它的一个或多个参数未知，借助于总体X的一个样本估计总体未知参数的值的问题，即称之为参数的点估计；
+
+点估计问题的一般提法是：设总体X的分布函数F(x;θ)的形式为已知，θ是带估参数；X1,X2,...,Xn是X的一个样本，x1,x2,...,xn是相应的一个样本值。点估计的问题就是要构造一个适当的统计量θ(X1,X2,...,Xn)，用它的观察值
+θ(x1,x2,...,xn)作为未知参数θ的估计值；
+
+### 矩阵估计法
+
+### 最大似然估计法
+
+## 基于截尾样本的最大似然估计
+
+## 估计量的评选标准
+
+- 无偏性
+- 有效性
+- 相合性
+
+## 区间估计
+
+对于一个未知量，人们在测量或计算时，除了得到近似值，还希望知道近似值的精确程度（所求真值所在的范围）；这样的范围通常以区间的形式给出，同时还给出次区间包含参数真值的可信程度，这就是区间估计。
+
+- 置信区间
+- 置信水平
+- 置信上/下限
+
+## 正态总体均值与方差的区间估计
+
+### 单个总体 N(μ, σ^2)
+
+#### 均值μ的置信区间
+
+- $σ^2$已知
+
+$$
+\frac{\overline X -\mu}{\sigma/\sqrt{n}}  \sim N(0,1)
+$$
+
+```{r echo=FALSE}
+curve(dnorm(x, mean = 0, sd = 1), 
+      xlim = c(-4, 4), xlab = "", ylab = "")
+y <- dnorm(2, 0, 1)
+segments(-2, -0.2, -2, y, lty = 2)
+segments(2, -0.2, 2, y, lty = 2)
+shdaow_x <- seq(2, 4, 0.1)
+shdaow_y <- dnorm(shdaow_x, 0, 1)
+## add two points
+shdaow_x <- c(shdaow_x[1], shdaow_x, tail(shdaow_x, 1))
+shdaow_y <- c(0, shdaow_y, 0)
+polygon(shdaow_x, shdaow_y, density = 20, col = "red")
+# other side
+polygon(-1*shdaow_x, shdaow_y, density = 20, col = "red")
+legend("topright", "N(0,1)")
+```
+
+- $σ^2$未知
+
+$$
+\frac{\overline X -\mu}{S/\sqrt{n}} \sim t(n-1)
+$$
+
+```{r echo=FALSE}
+curve(dt(x, df = 2), 
+      xlim = c(-4, 4), ylim = c(0,0.4),
+      xlab = "", ylab = "")
+s_x <- seq(2,4,0.1)
+s_y <- dt(s_x, df = 2)
+s_x <- c(s_x[1], s_x, tail(s_x, 1))
+s_y <- c(0, s_y, 0)
+polygon(s_x, s_y, density = 20, col = 2)
+polygon(-1*s_x, s_y, density = 20, col = 2)
+legend("topright", "t(n-1)")
+```
+
+#### 方差σ^2的置信区间
+
+此处，根据实际问题的需要，只介绍均值μ未知的情况
+
+$$
+\frac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1)
+$$
+
+```{r echo=FALSE}
+curve(dchisq(x, df = 4), 
+      xlim = c(0,14), ylim = c(0,0.25), 
+      xlab = "", ylab = "")
+anno <- function(ss) {
+  p <- ss[2]
+  segments(p, 0, p, dchisq(p, df = 4), lty = 2, col = 2)
+  s_x <- c(ss[1], ss, tail(ss,1))
+  s_y <- dchisq(ss, df = 4)
+  s_y <- c(0, s_y, 0)
+  polygon(s_x, s_y, col = 2, density = 20)
+}
+anno(seq(0, 1.2, 0.1))
+anno(seq(14, 8, -0.1))
+```
+
+
+### 两个总体N(μ1,σ1^2),  N(μ2,σ2^2)的情况
+
+#### 两个总体均值差 μ1-μ2 的置信区间
+
+- $σ_1^2,σ_2^2$均为已知
+
+$$
+\overline X - \overline Y \sim N(\mu_1 - \mu_2, \frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}) \\
+\frac{(\overline X - \overline Y)-(\mu_1 - \mu_2)}
+{\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}} \sim N(0,1)
+$$
+
+- $σ_1^2 = σ_2^2 = σ^2$,但$σ^2$为未知
+
+$$
+\frac{(\overline X - \overline Y)-(\mu_1 - \mu_2)}
+{S_\omega \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} 
+\sim t(n_1 + n_2 -2)
+$$
+
+#### 两个总体方差比σ1^2 / σ2^2的置信区间
+
+- μ1,μ2均为未知
+
+$$
+\frac{S_1^2/S_2^2}{\sigma_1^2/\sigma_2^2} \sim F(n_1-1, n_2-1)
+$$
+
+## (0-1)分布参数的区间估计
+
+## 单侧置信区间
+
+```{r echo=FALSE}
+par(mfrow=c(1,2)) 
+# up limit
+curve(dchisq(x, df = 4), 
+      xlim = c(0,14), ylim = c(0,0.25), 
+      xlab = "", ylab = "")
+anno <- function(ss) {
+  p <- ss[2]
+  # segments(p, 0, p, dchisq(p, df = 4), lty = 2, col = 2)
+  s_x <- c(ss[1], ss, tail(ss,1))
+  s_y <- dchisq(ss, df = 4)
+  s_y <- c(0, s_y, 0)
+  polygon(s_x, s_y, col = 2, density = 20)
+}
+anno(seq(0, 1.2, 0.1))
+# down limit
+curve(dnorm(x, mean = 0, sd = 1), 
+      xlim = c(-4, 4), xlab = "", ylab = "")
+shdaow_x <- seq(2, 4, 0.1)
+shdaow_y <- dnorm(shdaow_x, 0, 1)
+shdaow_x <- c(shdaow_x[1], shdaow_x, tail(shdaow_x, 1))
+shdaow_y <- c(0, shdaow_y, 0)
+polygon(shdaow_x, shdaow_y, density = 20, col = "red")
+par(mypar)
+```
+
+
+正态总体均值、方差的枢轴量的分布
+
+
+
+正态总体|待估参数|其他参数|枢轴量的分布
+--------|--------|--------|------------
+一个    |μ       |$σ^2$已知|$Z = \frac{\overline X -\mu}{\sigma/\sqrt{n}}  \sim N(0,1)$
+一个    |μ       |$σ^2$未知|$t = \frac{\overline X -\mu}{S/\sqrt{n}} \sim t(n-1)$
+一个    |σ       |μ未知|$\frac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1)$
+两个    |μ1-μ2   |$σ_1^2,σ_2^2$已知|$Z = \frac{(\overline X - \overline Y)-(\mu_1 - \mu_2)}{\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}} \sim N(0,1)$
+两个    |μ1-μ2    |$σ_1^2 = σ_2^2 = σ^2, σ^2$未知|$t = \frac{(\overline X - \overline Y)-(\mu_1 - \mu_2)}{S_\omega \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} \sim t(n_1 + n_2 -2)$
+两个    |$σ_1^2/σ_2^2$|μ1，μ2未知 |$F = \frac{S_1^2/S_2^2}{\sigma_1^2/\sigma_2^2} \sim F(n_1-1, n_2-1)$
+
+
+# 第八章 假设检验
+
+## （一）、假设检验
+
+统计推断的另一类重要问题是假设检验问题。在总体的分布完全未知或只知其形式、但不知其参数的情况下，为了推断总体的某些未知特征，提出某些关于总体的假设。
+
+其核心思想是一个小概率事件在一次观测中是不应该出现的，而如果它竟然出现了，一个合理的解释是它实际上并不是一个小概率事件，我们把它当作一个小概率事件是因为我们的统计假设不对，应该拒绝这个假设。
+
+## （二）、正态总体均值的假设检验
+
+### 单个总体 N(μ, σ^2)均值检验
+
+单个样本检验步骤：
+
+1. 建立假设，包括$H_0$与$H_A$
+
+一般来说，$H_0$的取值有三种肯能，对应的，$H_A$也有三种可能：
+
+$$
+H_0:\begin{cases}
+\mu = \mu _0 \\
+\mu \leq \mu_0 \\
+\mu \geq \mu_0 
+\end{cases}
+\quad \quad \quad \quad
+H_A:\begin{cases}
+\mu \neq \mu _0 \\\mu > \mu_0 \\ \mu < \mu_0
+\end{cases}
+$$
+
+2. 选择显著水平α
+
+我们一般选取α=0.05，这是一个约定俗成，理论上并没有任何特殊意义，在实际工作中，如果们算出的概率十分接近0.05，一般不应轻易下结论，而应该增加样本含量后再次进行检验。
+
+3. 选择统计量及其分布
+
+检验均值一般选择$\overline{X}$为统计量，检验方差选择$S^2$为统计量，统计量服从什么分布由抽样分布决定：
+
+* 检验均值
+    - 总体方差已知，u检验
+$$
+u = \frac{\overline{X}-\mu_0}{\delta /\sqrt{n}} \sim N(0, 1)
+$$
+
+    - 总体方差未知，t检验
+$$
+t = \frac{\overline{X}-\mu_0}{S/\sqrt{n}} \sim t(n-1)
+$$
+
+* 检验方差
+$$
+\chi^2 = \frac{(n-1)S^2}{\delta_0^2} \sim \chi^2(n-1)
+$$
+
+4. 建立拒绝域
+
+根据假设确定是单侧检验还是双侧检验；
+
+```{r echo=FALSE}
+par(mfrow=c(1,2)) 
+## 1
+curve(dchisq(x, df = 4), 
+      xlim = c(0,14), ylim = c(0,0.25), 
+      xlab = "", ylab = "")
+anno(seq(0, 1.2, 0.1))
+## 2
+curve(dnorm(x, mean = 0, sd = 1), 
+      xlim = c(-4, 4), xlab = "", ylab = "")
+y <- dnorm(2, 0, 1)
+shdaow_x <- seq(2, 4, 0.1)
+shdaow_y <- dnorm(shdaow_x, 0, 1)
+shdaow_x <- c(shdaow_x[1], shdaow_x, tail(shdaow_x, 1))
+shdaow_y <- c(0, shdaow_y, 0)
+polygon(shdaow_x, shdaow_y, density = 20, col = "red")
+polygon(-1*shdaow_x, shdaow_y, density = 20, col = "red")
+par(mypar)
+```
+
+5. 计算统计量，并对结果做出解释
+
+把样本观测值代入统计量公式，求得统计量取值，检查是否落入拒绝域，并对原问题作出明确回答；
+
+```{r echo=FALSE}
+curve(dnorm(x, mean = 0, sd = 1), yaxt = "n",
+      xlim = c(-5, 5), xlab = "", ylab = "")
+shdaow_x <- seq(1.96, 5, 0.1)
+shdaow_y <- dnorm(shdaow_x, 0, 1)
+shdaow_x <- c(shdaow_x[1], shdaow_x, tail(shdaow_x, 1))
+shdaow_y <- c(0, shdaow_y, 0)
+polygon(shdaow_x, shdaow_y, density = 20)
+polygon(-1*shdaow_x, shdaow_y, density = 20)
+abline(h = 0, lty = 2)
+points(c(1.3, 2.4), c(0,0), pch = c(19,15), col = c(3,2))
+legend("topright", legend = c("accept", "refuse"),
+       pch = c(19,15), col = c(3,2))
+text(3.1, 0.05, "0.025")
+text(-3.1, 0.05, "0.025")
+text(0.8, 0.16, "0.95")
+```
+
+- 若没有落入，则认为“无显著差异”，接受$H_0$;
+- 若落入α=0.05的拒绝域，进一步与α=0.001的拒绝域比较，若未落入，则认为“有显著差异，但未达极其显著水平”，拒绝$H_0$;
+- 若落入α=0.01的拒绝域，则认为有“极其显著差异”，拒绝$H_0$；
+
+
+【问题】
+
+某地区10年前普查时，13岁男孩平均身高为1.51 m，现抽查200个12.5岁~13.5岁男孩，身高平均值为1.51米，标准差S=0.073 m，问10年来该地区男孩身高是否有明显增长？
+
+【解决方案】
+
+先假设没有明显增长，即$H_0: \mu = \mu_0 = 1.51$，再看从这样的一个总体中抽出一个$n=200, \overline{X}=1.53, S=0.073$的可能性有多大？
+
+如果可能性很大，我们就接受假设，认为$\mu$与$mu_0$差别不大；否则如何可能性很小，则说明在假设成立的条件下，这是一个小概率事件，应该拒绝，选择背择假设；
+
+【解】
+
+1. $H_0: \mu = \mu_0 = 1.51, \quad H_A: \mu > \mu_0 = 151$
+
+2. α = 0.05
+
+3. $t = \frac{\overline{X}-\mu_0}{S/\sqrt{n}} \sim t(n-1)$
+
+4. $t_{0.95}(199)  \approx 1.653 \quad t_{0.99}(199)  \approx 2.347$
+
+5. $t = \frac{\overline{X}-\mu_0}{S/\sqrt{n}} \sim t(n-1) = \frac{1.53 - 1.51}{0.073/\sqrt{200}} = 3.87 \\ t > t_{0.99}$
+
+### 两个正态总体均值差检验
+
+双样本检验步骤与单样本基本相同，只是不再是检验总体参数是否等于某一指，而是检验两个总体参数是否相等，以及统计量和分布都有变化。
+
+* 检验两个方差是否相等
+* 检验两个均值是否相等
+    - 两总体方差已知
+	- 两总体方差未知，但它们相等
+	- 两总体方差未知，且不相等
+
+
+### 基于成对数据的检验(t检验) 
+## （三）、正态总体方差的假设检验
+### 单个总体的情况
+### 两个总体的情况
+## （四）、置信区间与假设检验之间的关系
+## （五）、样本容量的选取
+## （六）、分布拟合检验
+## （七）、秩和检验
+## （八）、假设检验问题的p值法
+
+
+# 第九章 方差分析及回归分析
+
+在科学试验和生产实践中，影响一事物的因素往往是很多的。方差分析就是根据实验结果进行分析，鉴别各个有关因素对试验结果影响的有效方法。如果在一项试验的过程中只有一个因素在改变称为单因素试验，如果多于一个因素在改变称为多因素试验。
+
+## （一）、单因素试验的方差分析
+
+## （二）、双因素试验的方差分析
+
+双因素试验的方差分析表
+
+方差来源|平方和|自由度|均方|F比
+--------|------|------|----|---
+因素A|$S_A$|r-1|$\overline{S}_A=\frac{S_A}{r-1}$|$F_A=\frac{\overline{S}_A}{\overline{S_E}}$
+因素B|$S_B$|s-1|$\overline{S}_B=\frac{S_B}{s-1}$|$F_B=\frac{\overline{S}_B}{\overline{S_E}}$
+交互作用|$S_{A*B}$|(r-1)(s-1)|$\overline{S}_{A*B}=\frac{S_{A*B}}{(r-1)(s-1)}$|$F_{A*B}=\frac{\overline{S}_{A*B}}{S_E}$
+误差|$S_E$|rs(t-1)|$\overline{S}_E=\frac{S_E}{rs(t-1)}$|
+总合|$S_r$|rst-1||
+
+
+## （三）、一元线性回归
+
+## （四）、多元线性回归
