@@ -1,0 +1,74 @@
+---
+title: "cgdsr"
+output: html_document
+---
+
+## connection
+
+the first thing you need to do is create a connection, then test it.
+
+```{r}
+library(cgdsr)
+mycgds <- CGDS("http://www.cbioportal.org/public-portal/")
+test(mycgds)
+```
+
+## pick one project
+
+the function `getCancerStudies` will return all available cancer studies, the output is a data.matrix, contains cancer_study_id, name and description; here, i use the project: Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)
+
+```{r }
+all_cancerstudy <- getCancerStudies(mycgds)
+all_cancerstudy[1:10, 1:2]
+
+mycancerstudy <- all_cancerstudy[19, 1]
+```
+
+## case
+
+one project may contain many cases, for example, the project "brca_metabric" contain six caselist:
+
+```{r}
+all_caselist <- getCaseLists(mycgds, mycancerstudy)
+all_caselist[, 1:2]
+mycaselist <- all_caselist[1,1]
+```
+
+## data
+
+the brca_metabric study have more than one genetic profiles: 
+
+```{r}
+all_geneticprofile <- getGeneticProfiles(mycgds, mycancerstudy)
+all_geneticprofile[, 1:2]
+mygeneticprofile <- all_geneticprofile[4,1]
+```
+
+## Clinical Data 
+
+[Clinical Data](http://www.cbioportal.org/study?id=brca_metabric#clinical) on the web
+
+```{r}
+myclinicaldata <- getClinicalData(mycgds, mycaselist)
+colnames(myclinicaldata)
+```
+
+## do analysis
+
+now, simple analysis
+
+```{r}
+boxplot(TUMOR_SIZE ~ COHORT, data = myclinicaldata,
+        xlab = "COHORT", ylab = "TUMOR_SIZE")
+```
+
+## other
+```{r}
+x = getMutationData(mycgds, mycaselist, mygeneticprofile, c('BRCA1','BRCA2'))
+y = getProfileData(mycgds, c('BRCA1','BRCA2'), mygeneticprofile, mycaselist)
+```
+
+
+## download 
+
+or, you can download all data from [github](https://media.githubusercontent.com/media/cBioPortal/datahub/master/public/brca_metabric.tar.gz)
