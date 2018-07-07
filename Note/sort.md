@@ -1,6 +1,6 @@
 ## 冒泡排序
 
-冒泡排序是最简单的排序算法，只需要调整**相邻**的两个对象，将较大的数移动到后面，每次循环就可以将最大的对象调整到最后，下次循环就不需要再考虑，起其时间复杂度为O(n^2)。
+冒泡排序是最简单的排序算法，只需要调整**相邻**的两个对象，将较大的数移动到后面，每次循环就可以将最大的对象调整到最后，下次循环就不需要再考虑，其时间复杂度为O(n^2)。
 
 ## 梳排序
 
@@ -16,19 +16,19 @@
 
 ## 快速排序
 
-[快速排序](https://www.geeksforgeeks.org/quick-sort/)也是一种分而治之的算法，选定一个值，将小于它和大于它的对象分别放到左边和右边，然后再分别对这两部分进行排序。
+[快速排序](https://www.geeksforgeeks.org/quick-sort/)也是一种分而治之的算法，选定一个值，将小于它和大于它的对象分别放到左边和右边，然后再分别对这两部分进行排序。
 
 ![](https://www.geeksforgeeks.org/wp-content/uploads/gq/2014/01/QuickSort2.png)
 
-## 插入排序
+## 插入排序
 
-[插入排序](https://www.geeksforgeeks.org/insertion-sort/)是一个简单地算法，每次**插入一个数**，使得向量有序；
+[插入排序](https://www.geeksforgeeks.org/insertion-sort/)是一个简单地算法，每次**插入一个数**，使得向量有序；
 
 ![](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/card.jpg)
 
 ## Timsort
 
-[Timsort](https://www.geeksforgeeks.org/timsort/)结合了插入排序和归并排序的算法，将序列分成称为`Run`小块，先使用插入排序将这些小块排好序，然后利用归并排序将这些小块合并起来。
+[Timsort](https://www.geeksforgeeks.org/timsort/)结合了插入排序和归并排序的算法，将序列分成称为`Run`小块，先使用插入排序将这些小块排好序，然后利用归并排序将这些小块合并起来。
 
 ![](https://upload.wikimedia.org/wikipedia/commons/6/63/Selection_of_minrun_by_timsort.png)
 
@@ -46,6 +46,6 @@
 
 ## 基数排序
 
-[基数排序](https://www.geeksforgeeks.org/radix-sort/)可以认为多次使用桶排序，将排序对象分成多个片段，对每一片段进行一次桶排序；
+[基数排序](https://www.geeksforgeeks.org/radix-sort/)可以认为多次使用桶排序，将排序对象分成多个片段，对每一片段进行一次桶排序；
 
 ![](https://images0.cnblogs.com/i/497634/201403/161837176365265.jpg)
